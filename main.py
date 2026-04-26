@@ -6,6 +6,7 @@ import json
 import dotenv
 import requests
 import subprocess
+from pyfiglet import Figlet
 from bs4 import BeautifulSoup
 
 dotenv.load_dotenv()
@@ -23,6 +24,7 @@ session = requests.Session()
 TRANSLATIONS = {
     "میزان ترافیک رزرو شما": "Reserved Traffic",
     "گیگابایت": "GB",
+    "مگابایت": "MB",
     ":": ": ",
 }
 
@@ -44,6 +46,16 @@ def clean_text(text: str) -> str:
     # remove weird unicode spaces
     text = re.sub(r"\s+", " ", text).strip()
     return text
+
+
+def spaced(text: str):
+    return " ".join(text)
+
+
+def print_big(text: str):
+    print("\033[92m")  # green
+    print(Figlet(font="univers", width=200, justify="center").renderText(text))
+    print("\033[0m")
 
 
 # ------------------------
@@ -161,5 +173,9 @@ if traffic_tag:
     translated = translate_text(normalized)
     cleaned = clean_text(translated)
     print(cleaned)
+
+    cleaned = "Reserved Traffic: 132.55 GB"
+    *_, traffic, unit = cleaned.split()
+    print_big(f"{spaced(traffic)} {unit}")
 else:
     print("Traffic info not found")
