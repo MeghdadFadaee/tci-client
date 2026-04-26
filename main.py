@@ -54,7 +54,7 @@ def spaced(text: str):
 
 def print_big(text: str):
     print("\033[92m")  # green
-    print(Figlet(font="univers", width=200, justify="center").renderText(text))
+    print(Figlet(font="univers", width=150, justify="center").renderText(text))
     print("\033[0m")
 
 
@@ -91,7 +91,7 @@ def is_logged_in():
 # Login flow
 # ------------------------
 def login():
-    print("Logging in...")
+    # print("Logging in...")
 
     res = session.get(f"{BASE_URL}/panel")
     soup = BeautifulSoup(res.text, "html.parser")
@@ -110,7 +110,7 @@ def login():
     try:
         subprocess.run(["kitty", "+kitten", "icat", captcha_path])
     except FileNotFoundError:
-        print("kitty icat not available")
+        # print("kitty icat not available")
         exit(1)
 
     captcha = input("Captcha: ")
@@ -126,11 +126,11 @@ def login():
     res = session.post(action_url, data=payload)
 
     if "خروج" in res.text or "logout" in res.text.lower():
-        print("Login success ✅")
+        # print("Login success ✅")
         save_cookies()
         return True
     else:
-        print("Login failed ❌")
+        # print("Login failed ❌")
         return False
 
 
@@ -139,7 +139,7 @@ def login():
 # ------------------------
 def ensure_login():
     if load_cookies():
-        print("Loaded cookies")
+        # print("Loaded cookies")
 
         if is_logged_in():
             print("Session still valid ✅")
@@ -172,9 +172,8 @@ if traffic_tag:
     normalized = normalize_digits(traffic_text)
     translated = translate_text(normalized)
     cleaned = clean_text(translated)
-    print(cleaned)
+    # print(cleaned)
 
-    cleaned = "Reserved Traffic: 132.55 GB"
     *_, traffic, unit = cleaned.split()
     print_big(f"{spaced(traffic)} {unit}")
 else:
