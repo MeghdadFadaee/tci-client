@@ -77,7 +77,7 @@ set_env_key() {
       { print }
       END {
         if (!found) {
-          print key "=" value
+          print replacement
         }
       }
     ' "$ENV_PATH" >"$tmp_file"
@@ -277,20 +277,265 @@ extract_traffic() {
   ' "$1"
 }
 
+terminal_cols() {
+  local cols="${COLUMNS:-}"
+
+  if [[ -z "$cols" && -t 1 ]] && command -v tput >/dev/null 2>&1; then
+    cols="$(tput cols 2>/dev/null || true)"
+  fi
+
+  if [[ ! "$cols" =~ ^[0-9]+$ || "$cols" -lt 1 ]]; then
+    cols=150
+  fi
+
+  printf '%s\n' "$cols"
+}
+
+center_line() {
+  local line="$1"
+  local cols="$2"
+  local width
+
+  width="${#line}"
+  if ((width < cols)); then
+    printf '%*s%s\n' "$(((cols - width) / 2))" '' "$line"
+  else
+    printf '%s\n' "$line"
+  fi
+}
+
+large_glyph() {
+  case "$1" in
+    0)
+      printf '%s\n' \
+        '  ###  ' \
+        ' #   # ' \
+        '#     #' \
+        '#     #' \
+        '#     #' \
+        ' #   # ' \
+        '  ###  '
+      ;;
+    1)
+      printf '%s\n' \
+        '   #   ' \
+        '  ##   ' \
+        ' # #   ' \
+        '   #   ' \
+        '   #   ' \
+        '   #   ' \
+        ' ##### '
+      ;;
+    2)
+      printf '%s\n' \
+        ' ##### ' \
+        '#     #' \
+        '      #' \
+        '   ### ' \
+        '  #    ' \
+        ' #     ' \
+        '#######'
+      ;;
+    3)
+      printf '%s\n' \
+        ' ##### ' \
+        '#     #' \
+        '      #' \
+        '  #### ' \
+        '      #' \
+        '#     #' \
+        ' ##### '
+      ;;
+    4)
+      printf '%s\n' \
+        '#    # ' \
+        '#    # ' \
+        '#    # ' \
+        '#######' \
+        '     # ' \
+        '     # ' \
+        '     # '
+      ;;
+    5)
+      printf '%s\n' \
+        '#######' \
+        '#      ' \
+        '#      ' \
+        '###### ' \
+        '      #' \
+        '#     #' \
+        ' ##### '
+      ;;
+    6)
+      printf '%s\n' \
+        '  #### ' \
+        ' #     ' \
+        '#      ' \
+        '###### ' \
+        '#     #' \
+        '#     #' \
+        ' ##### '
+      ;;
+    7)
+      printf '%s\n' \
+        '#######' \
+        '     # ' \
+        '    #  ' \
+        '   #   ' \
+        '  #    ' \
+        ' #     ' \
+        '#      '
+      ;;
+    8)
+      printf '%s\n' \
+        ' ##### ' \
+        '#     #' \
+        '#     #' \
+        ' ##### ' \
+        '#     #' \
+        '#     #' \
+        ' ##### '
+      ;;
+    9)
+      printf '%s\n' \
+        ' ##### ' \
+        '#     #' \
+        '#     #' \
+        ' ######' \
+        '      #' \
+        '     # ' \
+        ' ####  '
+      ;;
+    .)
+      printf '%s\n' \
+        '       ' \
+        '       ' \
+        '       ' \
+        '       ' \
+        '       ' \
+        '  ##   ' \
+        '  ##   '
+      ;;
+    G)
+      printf '%s\n' \
+        ' ##### ' \
+        '#     #' \
+        '#      ' \
+        '#  ####' \
+        '#     #' \
+        '#     #' \
+        ' ##### '
+      ;;
+    B)
+      printf '%s\n' \
+        '###### ' \
+        '#     #' \
+        '#     #' \
+        '###### ' \
+        '#     #' \
+        '#     #' \
+        '###### '
+      ;;
+    M)
+      printf '%s\n' \
+        '#     #' \
+        '##   ##' \
+        '# # # #' \
+        '#  #  #' \
+        '#     #' \
+        '#     #' \
+        '#     #'
+      ;;
+    ' ')
+      printf '%s\n' \
+        '   ' \
+        '   ' \
+        '   ' \
+        '   ' \
+        '   ' \
+        '   ' \
+        '   '
+      ;;
+    *)
+      printf '%s\n' \
+        '???????' \
+        '     ? ' \
+        '    ?  ' \
+        '   ?   ' \
+        '       ' \
+        '   ?   ' \
+        '       '
+      ;;
+  esac
+}
+
+print_large_ascii() {
+  local text="${1^^}"
+  local cols
+  local char
+  local glyph
+  local -a glyph_lines
+  local -a rows=('' '' '' '' '' '' '')
+
+  for ((i = 0; i < ${#text}; i++)); do
+    char="${text:i:1}"
+    mapfile -t glyph_lines < <(large_glyph "$char")
+
+    for ((row = 0; row < 7; row++)); do
+      rows[$row]+="${glyph_lines[$row]} "
+    done
+  done
+
+  cols="$(terminal_cols)"
+  for glyph in "${rows[@]}"; do
+    center_line "${glyph%"${glyph##*[![:space:]]}"}" "$cols"
+  done
+}
+
+compact_display_text() {
+  local text="$1"
+  local unit
+  local number
+  local last_index
+  local -a parts
+
+  read -r -a parts <<<"$text"
+  if ((${#parts[@]} > 1)); then
+    last_index=$((${#parts[@]} - 1))
+    unit="${parts[$last_index]}"
+    if [[ "$unit" =~ ^[[:alpha:]]+$ ]]; then
+      unset "parts[$last_index]"
+      number="${parts[*]}"
+      number="${number//[[:space:]]/}"
+      printf '%s %s\n' "$number" "$unit"
+      return
+    fi
+  fi
+
+  printf '%s\n' "$text"
+}
+
 print_big() {
   local text="$1"
+  local display_text
+
+  display_text="$(compact_display_text "$text")"
 
   printf '\033[92m\n'
-  if [[ -x "$CWD/venv/bin/pyfiglet" ]] && "$CWD/venv/bin/pyfiglet" -f univers -w 150 -j center "$text"; then
+  if [[ -x "$CWD/venv/bin/pyfiglet" ]] && "$CWD/venv/bin/pyfiglet" -f univers -w 150 -j center "$display_text" 2>/dev/null; then
     :
-  elif command -v pyfiglet >/dev/null 2>&1 && pyfiglet -f univers -w 150 -j center "$text"; then
+  elif [[ -x "$CWD/venv/bin/pyfiglet" ]] && "$CWD/venv/bin/pyfiglet" -f standard -w 150 -j center "$display_text" 2>/dev/null; then
     :
-  elif command -v figlet >/dev/null 2>&1 && figlet -f univers -w 150 -c "$text" 2>/dev/null; then
+  elif command -v pyfiglet >/dev/null 2>&1 && pyfiglet -f univers -w 150 -j center "$display_text" 2>/dev/null; then
     :
-  elif command -v figlet >/dev/null 2>&1 && figlet -w 150 -c "$text"; then
+  elif command -v pyfiglet >/dev/null 2>&1 && pyfiglet -f standard -w 150 -j center "$display_text" 2>/dev/null; then
+    :
+  elif command -v figlet >/dev/null 2>&1 && figlet -f univers -w 150 -c "$display_text" 2>/dev/null; then
+    :
+  elif command -v figlet >/dev/null 2>&1 && figlet -w 150 -c "$display_text" 2>/dev/null; then
     :
   else
-    printf '%s\n' "$text"
+    print_large_ascii "$display_text"
   fi
   printf '\033[0m\n'
 }
