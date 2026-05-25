@@ -575,6 +575,17 @@ spaced_display_text() {
   space_characters "$text"
 }
 
+render_banner() {
+  local output
+
+  if output="$("$@" 2>/dev/null)"; then
+    printf '%s\n' "$output"
+    return 0
+  fi
+
+  return 1
+}
+
 print_big() {
   local text="$1"
   local display_text
@@ -582,17 +593,17 @@ print_big() {
   display_text="$(spaced_display_text "$text")"
 
   printf '\033[92m\n'
-  if [[ -x "$CWD/venv/bin/pyfiglet" ]] && "$CWD/venv/bin/pyfiglet" -f univers -w 150 -j center "$display_text" 2>/dev/null; then
+  if [[ -x "$CWD/venv/bin/pyfiglet" ]] && render_banner "$CWD/venv/bin/pyfiglet" -f univers -w 150 -j center "$display_text"; then
     :
-  elif [[ -x "$CWD/venv/bin/pyfiglet" ]] && "$CWD/venv/bin/pyfiglet" -f standard -w 150 -j center "$display_text" 2>/dev/null; then
+  elif [[ -x "$CWD/venv/bin/pyfiglet" ]] && render_banner "$CWD/venv/bin/pyfiglet" -f standard -w 150 -j center "$display_text"; then
     :
-  elif command -v pyfiglet >/dev/null 2>&1 && pyfiglet -f univers -w 150 -j center "$display_text" 2>/dev/null; then
+  elif command -v pyfiglet >/dev/null 2>&1 && render_banner pyfiglet -f univers -w 150 -j center "$display_text"; then
     :
-  elif command -v pyfiglet >/dev/null 2>&1 && pyfiglet -f standard -w 150 -j center "$display_text" 2>/dev/null; then
+  elif command -v pyfiglet >/dev/null 2>&1 && render_banner pyfiglet -f standard -w 150 -j center "$display_text"; then
     :
-  elif command -v figlet >/dev/null 2>&1 && figlet -f univers -w 150 -c "$display_text" 2>/dev/null; then
+  elif command -v figlet >/dev/null 2>&1 && render_banner figlet -f univers -w 150 -c "$display_text"; then
     :
-  elif command -v figlet >/dev/null 2>&1 && figlet -w 150 -c "$display_text" 2>/dev/null; then
+  elif command -v figlet >/dev/null 2>&1 && render_banner figlet -w 150 -c "$display_text"; then
     :
   else
     print_large_ascii "$display_text"
