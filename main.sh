@@ -307,164 +307,196 @@ center_line() {
 large_glyph() {
   case "$1" in
     0)
-      printf '%s\n' \
-        '  ###  ' \
-        ' #   # ' \
-        '#     #' \
-        '#     #' \
-        '#     #' \
-        ' #   # ' \
-        '  ###  '
+      cat <<'GLYPH_0'
+   ,a8888a,
+ ,8P"'  `"Y8,
+,8P        Y8,
+88          88
+88          88
+`8b        d8'
+ `8ba,  ,ad8'
+   "Y8888P"
+GLYPH_0
       ;;
     1)
-      printf '%s\n' \
-        '   #   ' \
-        '  ##   ' \
-        ' # #   ' \
-        '   #   ' \
-        '   #   ' \
-        '   #   ' \
-        ' ##### '
+      cat <<'GLYPH_1'
+    88
+  ,d88
+888888
+    88
+    88
+    88
+    88
+    88
+GLYPH_1
       ;;
     2)
-      printf '%s\n' \
-        ' ##### ' \
-        '#     #' \
-        '      #' \
-        '   ### ' \
-        '  #    ' \
-        ' #     ' \
-        '#######'
+      cat <<'GLYPH_2'
+ ad888888b,
+d8"     "88
+        a8P
+     ,d8P"
+   a8P"
+ a8P'
+d8"
+88888888888
+GLYPH_2
       ;;
     3)
-      printf '%s\n' \
-        ' ##### ' \
-        '#     #' \
-        '      #' \
-        '  #### ' \
-        '      #' \
-        '#     #' \
-        ' ##### '
+      cat <<'GLYPH_3'
+ ad888888b,
+d8"     "88
+        a8P
+     aad8"
+     ""Y8,
+        "8b
+Y8,     a88
+ "Y888888P'
+GLYPH_3
       ;;
     4)
-      printf '%s\n' \
-        '#    # ' \
-        '#    # ' \
-        '#    # ' \
-        '#######' \
-        '     # ' \
-        '     # ' \
-        '     # '
+      cat <<'GLYPH_4'
+        ,d8
+      ,d888
+    ,d8" 88
+  ,d8"   88
+,d8"     88
+8888888888888
+         88
+         88
+GLYPH_4
       ;;
     5)
-      printf '%s\n' \
-        '#######' \
-        '#      ' \
-        '#      ' \
-        '###### ' \
-        '      #' \
-        '#     #' \
-        ' ##### '
+      cat <<'GLYPH_5'
+8888888888
+88
+88  ____
+88a8PPPP8b,
+PP"     `8b
+         d8
+Y8a     a8P
+ "Y88888P"
+GLYPH_5
       ;;
     6)
-      printf '%s\n' \
-        '  #### ' \
-        ' #     ' \
-        '#      ' \
-        '###### ' \
-        '#     #' \
-        '#     #' \
-        ' ##### '
+      cat <<'GLYPH_6'
+  ad8888ba,
+ 8P'    "Y8
+d8
+88,dd888bb,
+88P'    `8b
+88       d8
+88a     a8P
+ "Y88888P"
+GLYPH_6
       ;;
     7)
-      printf '%s\n' \
-        '#######' \
-        '     # ' \
-        '    #  ' \
-        '   #   ' \
-        '  #    ' \
-        ' #     ' \
-        '#      '
+      cat <<'GLYPH_7'
+888888888888
+        ,8P'
+       d8"
+     ,8P'
+    d8"
+  ,8P'
+ d8"
+8P'
+GLYPH_7
       ;;
     8)
-      printf '%s\n' \
-        ' ##### ' \
-        '#     #' \
-        '#     #' \
-        ' ##### ' \
-        '#     #' \
-        '#     #' \
-        ' ##### '
+      cat <<'GLYPH_8'
+ ad88888ba
+d8"     "8b
+Y8a     a8P
+ "Y8aaa8P"
+ ,d8"""8b,
+d8"     "8b
+Y8a     a8P
+ "Y88888P"
+GLYPH_8
       ;;
     9)
-      printf '%s\n' \
-        ' ##### ' \
-        '#     #' \
-        '#     #' \
-        ' ######' \
-        '      #' \
-        '     # ' \
-        ' ####  '
+      cat <<'GLYPH_9'
+ ad88888ba
+d8"     "88
+8P       88
+Y8,    ,d88
+ "PPPPPP"88
+         8P
+8b,    a8P
+`"Y8888P'
+GLYPH_9
       ;;
     .)
-      printf '%s\n' \
-        '       ' \
-        '       ' \
-        '       ' \
-        '       ' \
-        '       ' \
-        '  ##   ' \
-        '  ##   '
+      cat <<'GLYPH_DOT'
+
+
+
+
+
+
+888
+888
+GLYPH_DOT
       ;;
     G)
-      printf '%s\n' \
-        ' ##### ' \
-        '#     #' \
-        '#      ' \
-        '#  ####' \
-        '#     #' \
-        '#     #' \
-        ' ##### '
+      cat <<'GLYPH_G'
+  ,ad8888ba,
+ d8"'    `"8b
+d8'
+88
+88      88888
+Y8,        88
+ Y8a.    .a88
+  `"Y88888P"
+GLYPH_G
       ;;
     B)
-      printf '%s\n' \
-        '###### ' \
-        '#     #' \
-        '#     #' \
-        '###### ' \
-        '#     #' \
-        '#     #' \
-        '###### '
+      cat <<'GLYPH_B'
+88888888ba
+88      "8b
+88      ,8P
+88aaaaaa8P'
+88""""""8b,
+88      `8b
+88      a8P
+88888888P"
+GLYPH_B
       ;;
     M)
-      printf '%s\n' \
-        '#     #' \
-        '##   ##' \
-        '# # # #' \
-        '#  #  #' \
-        '#     #' \
-        '#     #' \
-        '#     #'
+      cat <<'GLYPH_M'
+88b           d88
+888b         d888
+88`8b       d8'88
+88 `8b     d8' 88
+88  `8b   d8'  88
+88   `8b d8'   88
+88    `888'    88
+88     `8'     88
+GLYPH_M
       ;;
     ' ')
-      printf '%s\n' \
-        '   ' \
-        '   ' \
-        '   ' \
-        '   ' \
-        '   ' \
-        '   ' \
-        '   '
+      cat <<'GLYPH_SPACE'
+
+
+
+
+
+
+
+
+GLYPH_SPACE
       ;;
     *)
-      printf '%s\n' \
-        '???????' \
-        '     ? ' \
-        '    ?  ' \
-        '   ?   ' \
-        '       ' \
-        '   ?   ' \
-        '       '
+      cat <<'GLYPH_UNKNOWN'
+ ad888888b,
+d8"     "88
+        a8P
+     ,d8P"
+   a8P"
+
+   888
+   888
+GLYPH_UNKNOWN
       ;;
   esac
 }
@@ -474,15 +506,27 @@ print_large_ascii() {
   local cols
   local char
   local glyph
+  local glyph_width
+  local glyph_line
+  local padded
   local -a glyph_lines
-  local -a rows=('' '' '' '' '' '' '')
+  local -a rows=('' '' '' '' '' '' '' '')
 
   for ((i = 0; i < ${#text}; i++)); do
     char="${text:i:1}"
     mapfile -t glyph_lines < <(large_glyph "$char")
 
-    for ((row = 0; row < 7; row++)); do
-      rows[$row]+="${glyph_lines[$row]} "
+    glyph_width=0
+    for ((row = 0; row < 8; row++)); do
+      glyph_line="${glyph_lines[$row]:-}"
+      if ((${#glyph_line} > glyph_width)); then
+        glyph_width="${#glyph_line}"
+      fi
+    done
+
+    for ((row = 0; row < 8; row++)); do
+      printf -v padded '%-*s' "$glyph_width" "${glyph_lines[$row]:-}"
+      rows[$row]+="$padded "
     done
   done
 
