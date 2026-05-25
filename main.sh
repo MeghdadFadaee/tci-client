@@ -475,16 +475,15 @@ GLYPH_B
 GLYPH_M
       ;;
     ' ')
-      cat <<'GLYPH_SPACE'
-
-
-
-
-
-
-
-
-GLYPH_SPACE
+      printf '%s\n' \
+        '    ' \
+        '    ' \
+        '    ' \
+        '    ' \
+        '    ' \
+        '    ' \
+        '    ' \
+        '    '
       ;;
     *)
       cat <<'GLYPH_UNKNOWN'
@@ -536,7 +535,24 @@ print_large_ascii() {
   done
 }
 
-compact_display_text() {
+space_characters() {
+  local text="$1"
+  local output=""
+  local char
+  local i
+
+  for ((i = 0; i < ${#text}; i++)); do
+    char="${text:i:1}"
+    if [[ -n "$output" ]]; then
+      output+=" "
+    fi
+    output+="$char"
+  done
+
+  printf '%s\n' "$output"
+}
+
+spaced_display_text() {
   local text="$1"
   local unit
   local number
@@ -551,19 +567,19 @@ compact_display_text() {
       unset "parts[$last_index]"
       number="${parts[*]}"
       number="${number//[[:space:]]/}"
-      printf '%s %s\n' "$number" "$unit"
+      printf '%s %s\n' "$(space_characters "$number")" "$unit"
       return
     fi
   fi
 
-  printf '%s\n' "$text"
+  space_characters "$text"
 }
 
 print_big() {
   local text="$1"
   local display_text
 
-  display_text="$(compact_display_text "$text")"
+  display_text="$(spaced_display_text "$text")"
 
   printf '\033[92m\n'
   if [[ -x "$CWD/venv/bin/pyfiglet" ]] && "$CWD/venv/bin/pyfiglet" -f univers -w 150 -j center "$display_text" 2>/dev/null; then
