@@ -46,16 +46,32 @@ set_env_key() {
   local key="$1"
   local value="$2"
   local quoted
+  local replacement_file
   local tmp_file
 
   quoted="$(quote_env_value "$value")"
+  replacement_file="$(mktemp "${TMPDIR:-/tmp}/tci-env-replacement.XXXXXX")"
   tmp_file="$(mktemp "${TMPDIR:-/tmp}/tci-env.XXXXXX")"
+  printf '%s=%s\n' "$key" "$quoted" >"$replacement_file"
 
   if [[ -f "$ENV_PATH" ]]; then
-    awk -v key="$key" -v value="$quoted" '
+    awk -v key="$key" -v replacement_file="$replacement_file" '
+      BEGIN {
+        getline replacement < replacement_file
+        close(replacement_file)
+      }
+      skip_multiline {
+        if ($0 !~ "^[[:space:]]*(export[[:space:]]+)?[A-Za-z_][A-Za-z0-9_]*=") {
+          next
+        }
+        skip_multiline = 0
+      }
       $0 ~ "^[[:space:]]*(export[[:space:]]+)?" key "=" {
-        print key "=" value
+        print replacement
         found = 1
+        if ($0 ~ "^[[:space:]]*(export[[:space:]]+)?" key "=[\x22\x27]" && $0 !~ /[\x22\x27][[:space:]]*$/) {
+          skip_multiline = 1
+        }
         next
       }
       { print }
@@ -66,10 +82,11 @@ set_env_key() {
       }
     ' "$ENV_PATH" >"$tmp_file"
   else
-    printf '%s=%s\n' "$key" "$quoted" >"$tmp_file"
+    cp "$replacement_file" "$tmp_file"
   fi
 
   mv "$tmp_file" "$ENV_PATH"
+  rm -f "$replacement_file"
 }
 
 init_cookie_jar() {
@@ -95,7 +112,7 @@ save_cookies() {
 
   cookies_json="$(
     awk -F '\t' 'NF >= 7 { print $6 "\t" $7 }' "$COOKIE_JAR" |
-      jq -Rn '
+      jq -Rnc '
         reduce inputs as $line ({};
           ($line | split("\t")) as $parts
           | if ($parts | length) >= 2
